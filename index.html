@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طرق التحويل</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b14;--card:#0b1226;--line:#1b2548;--cyan:#22d3ee;--text:#fff;--mut:#8b93ad}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',system-ui,sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+/* loader */
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;z-index:99;transition:opacity .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.ring{position:relative;width:130px;height:130px;display:grid;place-items:center}
+.ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--line);border-top-color:var(--cyan);animation:spin 1s linear infinite;box-shadow:0 0 25px rgba(34,211,238,.35)}
+.ring img{width:80px;height:80px;object-fit:contain;border-radius:50%}
+.bar{width:160px;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:load 1.8s ease forwards}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes load{to{width:100%}}
+/* common */
+h1,h2{color:var(--cyan);display:flex;align-items:center;gap:10px}
+h1{font-size:22px;font-weight:800;margin:6px 0 8px}
+.sub{color:var(--mut);margin-bottom:18px;font-size:15px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.top img{height:38px;border-radius:8px}
+.top b{font-size:18px}
+.method{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 20px;margin-bottom:14px;cursor:pointer;transition:.2s;width:100%;color:inherit;font:inherit;text-align:right}
+.method:active,.method:hover{border-color:var(--cyan);box-shadow:0 0 18px rgba(34,211,238,.2)}
+.logo{width:70px;height:56px;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden;flex:none;color:#000;font-weight:800}
+.logo img{width:100%;height:100%;object-fit:contain}
+.method b{display:block;font-size:19px}
+.method small{color:var(--mut);font-family:monospace;font-size:15px;direction:ltr;display:inline-block}
+.arrow{margin-inline-start:auto;color:var(--cyan);font-size:22px}
+.back{background:none;border:0;color:var(--cyan);font:inherit;font-weight:700;cursor:pointer;margin-bottom:12px;padding:6px 0}
+.numbox{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px dashed var(--cyan);border-radius:16px;padding:14px 16px;margin-bottom:18px}
+.numbox span{font-family:monospace;font-size:18px;direction:ltr}
+.btn{background:var(--cyan);color:#001018;border:0;border-radius:12px;padding:10px 18px;font:inherit;font-weight:800;cursor:pointer}
+.btn.full{width:100%;padding:14px;font-size:17px;margin-top:6px}
+.btn:disabled{opacity:.5}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.step .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#001018;font-weight:800;margin-inline-end:8px}
+.step h3{display:inline;font-size:17px}
+.step p{color:var(--mut);margin:10px 0;line-height:1.7;font-size:15px}
+.step img,.step iframe{width:100%;border-radius:12px;border:0;display:block}
+.step iframe{aspect-ratio:16/9}
+.form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:20px}
+.form h2{font-size:18px;margin-bottom:12px}
+input[type=text],input[type=tel]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px;color:#fff;font:inherit;margin-bottom:10px}
+.drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--mut);cursor:pointer;margin-bottom:10px}
+.drop img{max-width:100%;max-height:260px;border-radius:10px}
+#msg{margin-top:12px;text-align:center;font-weight:700}
+.ok{color:#4ade80}.err{color:#f87171}
+footer{border-top:1px solid var(--line);margin-top:34px;padding-top:20px;text-align:center}
+.pay{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.pay span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700}
+footer p{color:var(--mut);font-size:14px}
+footer a{color:var(--cyan);text-decoration:none;font-weight:700}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="ring"><img id="ldLogo" alt=""></div><div class="bar"><i></i></div></div>
+
+<div class="wrap">
+  <div class="top"><img id="topLogo" alt=""><b id="storeName"></b></div>
+
+  <!-- صفحة 1: اختيار الطريقة -->
+  <section id="pageList">
+    <h1>💳 طرق التحويل</h1>
+    <p class="sub">اختار الطريقة اللي هتحوّل بيها لاستلام المنتج:</p>
+    <div id="methods"></div>
+  </section>
+
+  <!-- صفحة 2: الشرح + رفع الإيصال -->
+  <section id="pageGuide" class="hidden">
+    <button class="back" id="backBtn">← رجوع</button>
+    <h1 id="gTitle"></h1>
+    <div class="numbox"><span id="gNum"></span><button class="btn" id="copyBtn">نسخ</button></div>
+    <div id="steps"></div>
+
+    <div class="form">
+      <h2>📤 ارفع صورة التحويل</h2>
+      <input type="text" id="fName" placeholder="اسمك">
+      <input type="tel" id="fPhone" placeholder="رقم الواتساب" dir="ltr">
+      <input type="text" id="fOrder" placeholder="اسم المنتج / رقم الطلب (اختياري)">
+      <label class="drop" id="drop"><span id="dropTxt">اضغط لاختيار صورة الإيصال</span><input type="file" id="file" accept="image/*" hidden></label>
+      <button class="btn full" id="sendBtn">إرسال</button>
+      <div id="msg"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="pay"><span>Visa</span><span>Mastercard</span><span>Meeza</span><span>Smart Wallet</span><span>Vodafone Cash</span><span>Banque Misr</span><span>+15 more</span></div>
+    <p>Developed by <a id="devLink" target="_blank" rel="noopener">R Technolgy Web</a></p>
+  </footer>
+</div>
+
+<script>
+/* ============ إعدادات سهلة التعديل ============ */
+const CONFIG = {
+  storeName: "اسم متجرك",
+  logo: "logo.png",                       // حط اللوجو بنفس الاسم جنب الملف
+  whatsappDev: "https://wa.me/20XXXXXXXXXX", // لينك واتساب المطوّر (placeholder)
+  endpoint: "/api/send-receipt",
+  methods: [
+    {
+      id: "vodafone", name: "Vodafone Cash", number: "01031521865", logo: "",
+      steps: [
+        { title: "افتح تطبيق أنا فودافون", desc: "ادخل على خدمة فودافون كاش من التطبيق.", image: "", video: "" },
+        { title: "حوّل المبلغ للرقم", desc: "اكتب الرقم اللي فوق وأكد التحويل.", image: "", video: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
+        { title: "صوّر شاشة التحويل", desc: "خد سكرين شوت للإيصال وارفعه تحت.", image: "", video: "" }
+      ]
+    },
+    {
+      id: "instapay", name: "InstaPay", number: "01099644641", logo: "",
+      steps: [
+        { title: "افتح تطبيق البنك أو InstaPay", desc: "اختار التحويل عن طريق رقم الموبايل.", image: "", video: "" },
+        { title: "اكتب الرقم والمبلغ", desc: "راجع الاسم قبل التأكيد.", image: "", video: "" },
+        { title: "ارفع الإيصال", desc: "صوّر شاشة نجاح العملية وارفعها تحت.", image: "", video: "" }
+      ]
+    },
+    {
+      id: "telda", name: "Telda", number: "@mohamed922009", logo: "",
+      steps: [
+        { title: "افتح تطبيق تيلدا", desc: "اختار إرسال فلوس.", image: "", video: "" },
+        { title: "ابعت لليوزر", desc: "اكتب اليوزر اللي فوق وحدد المبلغ.", image: "", video: "" },
+        { title: "ارفع الإيصال", desc: "صوّر شاشة التحويل وارفعها تحت.", image: "", video: "" }
+      ]
+    }
+  ]
+};
+/* ============================================== */
+
+const $ = id => document.getElementById(id);
+let current = null, blob = null;
+
+$("ldLogo").src = $("topLogo").src = CONFIG.logo;
+[$("ldLogo"), $("topLogo")].forEach(i => i.onerror = () => i.style.display = "none");
+$("storeName").textContent = CONFIG.storeName;
+$("devLink").href = CONFIG.whatsappDev;
+window.addEventListener("load", () => setTimeout(() => $("loader").classList.add("hide"), 1800));
+
+CONFIG.methods.forEach(m => {
+  const b = document.createElement("button");
+  b.className = "method";
+  b.innerHTML = `<div class="logo">${m.logo ? `<img src="${m.logo}" alt="">` : m.name[0]}</div>
+    <div><b>${m.name}</b><small>${m.number}</small></div><span class="arrow">‹</span>`;
+  b.onclick = () => openGuide(m);
+  $("methods").appendChild(b);
+});
+
+function ytEmbed(u) {
+  const m = u.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
+  return m ? "https://www.youtube.com/embed/" + m[1] : "";
+}
+
+function openGuide(m) {
+  current = m;
+  $("gTitle").textContent = m.name;
+  $("gNum").textContent = m.number;
+  $("steps").innerHTML = m.steps.map((s, i) => {
+    const emb = s.video && !s.video.includes("XXXX") ? ytEmbed(s.video) : "";
+    return `<div class="step"><span class="n">${i + 1}</span><h3>${s.title}</h3><p>${s.desc}</p>
+      ${s.image ? `<img src="${s.image}" alt="">` : ""}
+      ${emb ? `<iframe src="${emb}" allowfullscreen></iframe>` : ""}</div>`;
+  }).join("");
+  $("pageList").classList.add("hidden");
+  $("pageGuide").classList.remove("hidden");
+  scrollTo(0, 0);
+}
+$("backBtn").onclick = () => {
+  $("pageGuide").classList.add("hidden");
+  $("pageList").classList.remove("hidden");
+};
+$("copyBtn").onclick = async () => {
+  try { await navigator.clipboard.writeText(current.number); $("copyBtn").textContent = "تم ✓"; }
+  catch { $("copyBtn").textContent = "انسخ يدوي"; }
+  setTimeout(() => $("copyBtn").textContent = "نسخ", 1500);
+};
+
+/* ضغط الصورة قبل الرفع */
+function compress(file) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1400 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = img.width * k; c.height = img.height * k;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", 0.8));
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+$("file").onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  blob = await compress(f);
+  $("drop").innerHTML = `<img src="${blob}" alt="">`;
+};
+
+$("sendBtn").onclick = async () => {
+  const msg = $("msg");
+  const name = $("fName").value.trim(), phone = $("fPhone").value.trim();
+  if (!name || !phone || !blob) { msg.className = "err"; msg.textContent = "اكتب اسمك ورقمك وارفع صورة الإيصال"; return; }
+  $("sendBtn").disabled = true; msg.className = ""; msg.textContent = "جاري الإرسال...";
+  try {
+    const r = await fetch(CONFIG.endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ method: current.name, name, phone, order: $("fOrder").value.trim(), image: blob })
+    });
+    if (!r.ok) throw 0;
+    msg.className = "ok"; msg.textContent = "✅ تم الإرسال، هنتواصل معاك على واتساب قريب";
+  } catch {
+    msg.className = "err"; msg.textContent = "حصلت مشكلة، حاول تاني";
+    $("sendBtn").disabled = false;
+  }
+};
+</script>
+</body>
+</html>
